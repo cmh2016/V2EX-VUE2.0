@@ -30,7 +30,6 @@ module.exports = {
         '/api':{
             target:'http://www.v2ex.com/api',
             changeOrigin:true,
-             ws: true,
             pathRewrite:{
                 '^/api':''
             }

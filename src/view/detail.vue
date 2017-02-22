@@ -1,6 +1,6 @@
 <template>
   <div>
-   detail
+   detail{{this.$route.query.id}}
   </div>
 </template>
 

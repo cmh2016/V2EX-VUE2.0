@@ -1,5 +1,6 @@
 <template>
   <div>
+   <x-loading v-show="loading"></x-loading>
     <x-header></x-header>
     <div style="width: 100%;overflow:scroll;-webkit-overflow-scrolling:touch;">
           <tab style="width:500px;" bar-active-color="#668599" :line-width="1"  v-model="index">
@@ -13,10 +14,10 @@
 <flexbox v-for="item in list">
      <flexbox-item :span="2"><img  :src="item.member.avatar_normal" alt=""></flexbox-item>
      <flexbox-item>
-     <router-link :to="{ path: '/detail', query: { id: item.id }}"><h2  class="title" v-text="item.title"></h2></router-link>
+     <router-link :to="{ path: '/detail', query: { id: item.id }}"><h2  class="title" v-text="item.title"></h2><span class="reply" v-text="item.replies"></span></router-link>
      
        <flexbox :gutter="5">
-       <flexbox-item :span="2">
+       <flexbox-item :span="3">
        <span  class="tag" v-text="item.node.title"></span>
      </flexbox-item>
      <flexbox-item>
@@ -25,9 +26,6 @@
       <flexbox-item>
        <span class="time">{{item.last_modified | time}}</span>
      </flexbox-item>
-     <flexbox-item :span="1">
-       <span class="reply" v-text="item.replies"></span>
-     </flexbox-item>
        </flexbox>
      </flexbox-item>
      </flexbox>
@@ -35,14 +33,17 @@
      </div>
   <!--  </scroller> -->
     <x-footer></x-footer>
+
    <!-- <loading :show="loading"></loading> -->
   </div>
+
 </template>
 
 <script>
-import { Group, Cell,Flexbox,FlexboxItem, Scroller ,Tab, TabItem,dateFormat,Loading} from 'vux'
-import XHeader from './header'
-import XFooter from './footer'
+import { Group, Cell,Flexbox,FlexboxItem, Scroller ,Tab, TabItem,dateFormat} from 'vux'
+import XHeader from 'components/header'
+import XFooter from 'components/footer'
+import XLoading from "components/loading";
 
 export default {
   components: {
@@ -50,12 +51,12 @@ export default {
     Cell,
     XHeader,
     Tab,
-   TabItem,
-  XFooter,
-  Scroller,
-  Flexbox,
-  FlexboxItem,
-  Loading
+    TabItem,
+    XFooter,
+    Scroller,
+    Flexbox,
+    FlexboxItem,
+    XLoading
   },
 
   data () {
@@ -66,8 +67,7 @@ export default {
            tabList:[{name:"热门",tag:"hot"},{name:"最新",tag:"latest"},"技术","创意","问与答"],
            activeTab:"hot",
            index:0,
-           loading:true,
-           loadingText:"加载中..",
+           loading:true
          }
 
   },
@@ -80,9 +80,13 @@ export default {
       getList:function (e) {
           this.$data.activeTab = e?e.tag:this.activeTab
           let that = this  
+          that.$data.loading = true;
           this.$http.get('/api/topics/'+that.$data.activeTab+'.json').then(function(res){
-            console.log(res)
+                    console.log(res)
                     that.$data.list=res.data;
+                    that.$nextTick(function(){
+                         that.$data.loading = false;
+                      });
             })
       },
       getBodyHeight:function(){
@@ -94,7 +98,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 @import '~vux/src/styles/1px.less';
 @import '../assets/common.less';
 .contant{
@@ -110,19 +114,21 @@ transform: translate3d(0, 0, 0);
   .title{
     font-size: .79rem;
     font-weight: 400;
-    overflow: hidden;
-    text-overflow:ellipsis;
-    white-space: nowrap;  
+    .ellipsesOne;
     color: #333;
+    display: inline-block;
+    width: 80%;
   }
   .tag{
-    padding: 5px;
+    padding: 3px;
     background-color: #f5f5f5;
     color: #999;
     font-size: .6rem;
+    .ellipsesOne;
   }
   .user{
     font-size: .7rem;
+    .ellipsesOne;
   }
   .time{
     font-size: .68rem;
@@ -130,9 +136,17 @@ transform: translate3d(0, 0, 0);
   }
   .reply{
     font-size: .65rem;
-    padding: 8px;
+    display: inline-block;
+    min-width: 25px;
+    min-height: 25px;
+    line-height: 25px;
+    border: 4px solid #f5f5f5;
     border-radius: 50%;
-    background-color: #f5f5f5;
+    color: #333;
+     vertical-align: middle;
+     text-align: center;
+    float: right;
+     background-color: #f5f5f5;
   }
   .vux-flexbox{
     margin-bottom: .5rem;
