@@ -1,5 +1,6 @@
 <template>
   <div>
+  <x-welcome v-show="show"></x-welcome>
    <x-loading v-show="loading"></x-loading>
     <x-header></x-header>
     <div style="width: 100%;overflow:scroll;-webkit-overflow-scrolling:touch;">
@@ -44,7 +45,7 @@ import { Group, Cell,Flexbox,FlexboxItem, Scroller ,Tab, TabItem,dateFormat} fro
 import XHeader from 'components/header'
 import XFooter from 'components/footer'
 import XLoading from "components/loading";
-
+import XWelcome from "components/welcome";
 export default {
   components: {
     Group,
@@ -56,7 +57,8 @@ export default {
     Scroller,
     Flexbox,
     FlexboxItem,
-    XLoading
+    XLoading,
+    XWelcome
   },
 
   data () {
@@ -64,10 +66,11 @@ export default {
            type: '1',
            list: [],
            bodyHeight:'',
-           tabList:[{name:"热门",tag:"hot"},{name:"最新",tag:"latest"},"技术","创意","问与答"],
+           tabList:[{name:"热门",tag:"hot",id:""},{name:"最新",tag:"latest",id:""},{name:"程序员",tag:"show",id:"300"},{name:"分享与发现",tag:"show",id:"16"},{name:"问与答",tag:"show",id:"12"},],
            activeTab:"hot",
            index:0,
-           loading:true
+           loading:false,
+           show:true
          }
 
   },
@@ -80,14 +83,21 @@ export default {
       getList:function (e) {
           this.$data.activeTab = e?e.tag:this.activeTab
           let that = this  
+          let node_id = ""
+          this.$data.activeTab=="show" && e.id!=""?node_id=e.id:""
           that.$data.loading = true;
-          this.$http.get('/api/topics/'+that.$data.activeTab+'.json').then(function(res){
+          this.$http.get('/api/topics/'+that.$data.activeTab+'.json?node_id='+node_id,{timeout: 1000}).then(function(res){
                     console.log(res)
                     that.$data.list=res.data;
                     that.$nextTick(function(){
                          that.$data.loading = false;
+                         that.$data.show = false;
                       });
+
             })
+          .catch(function(err){
+        console.log(err);
+    })
       },
       getBodyHeight:function(){
           let height = document.documentElement.clientHeight;
