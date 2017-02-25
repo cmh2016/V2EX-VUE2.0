@@ -78,17 +78,30 @@ export default {
     
      this.getList()
      this.getBodyHeight()
+     
   },
   methods:{
       getList:function (e) {
           this.$data.activeTab = e?e.tag:this.activeTab
           let that = this  
           let node_id = ""
-          this.$data.activeTab=="show" && e.id!=""?node_id=e.id:""
+          this.$data.activeTab=="show" && e.id!=""?node_id=e.id:node_id="0"
           that.$data.loading = true;
-          this.$http.get('/api/topics/'+that.$data.activeTab+'.json?node_id='+node_id,{timeout: 1000}).then(function(res){
-                    console.log(res)
+          //判断本地缓存是否有数据
+          let key = that.$data.activeTab+"-"+node_id;
+          let storage = window.localStorage;
+           let sstorage = window.sessionStorage ;
+          console.log(key) 
+          if(sstorage.getItem("welcome") == "end"){
+            that.$data.show = false;
+          }
+          if( storage.getItem(key) == null ) {
+            // 从服务器获取数据并写入缓存
+            this.$http.get('/api/topics/'+that.$data.activeTab+'.json?node_id='+node_id,{timeout: 1000}).then(function(res){
                     that.$data.list=res.data;
+                    //写进本地缓存
+                    storage.setItem(key, JSON.stringify(res.data));//对象转字符串
+                    sstorage.setItem("welcome","end");//对象转字符串
                     that.$nextTick(function(){
                          that.$data.loading = false;
                          that.$data.show = false;
@@ -96,8 +109,20 @@ export default {
 
             })
           .catch(function(err){
-        console.log(err);
-    })
+             console.log("请求失败，原因如下："+err);
+              that.$data.show = false;
+               that.$data.loading = false;
+          })
+  
+          }else{
+            //读取本地数据
+            that.$data.list = JSON.parse(storage.getItem(key))
+           that.$nextTick(function(){
+                         that.$data.loading = false;
+                      });
+          
+        }
+          
       },
       getBodyHeight:function(){
           let height = document.documentElement.clientHeight;
