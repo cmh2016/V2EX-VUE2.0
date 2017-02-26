@@ -5,12 +5,14 @@
     <x-header></x-header>
     <div style="width: 100%;overflow:scroll;-webkit-overflow-scrolling:touch;">
           <tab style="width:500px;" bar-active-color="#668599" :line-width="1"  v-model="index">
-            <tab-item :selected="activeTab === item.tag" v-for="item in tabList"  @on-item-click="getList(item)">{{item.name}}</tab-item>
+            <tab-item :selected="activeTab === item.active" v-for="item in tabList"  @on-item-click="getList(item)">{{item.name}}</tab-item>
            
           </tab>
     </div>
    <!--  <scroller :lock-x="true" :scrollbar-y="true" height="-145px" ref="scroller" :bounce="true"> -->
-     <div :style="{height:bodyHeight}" class="contant">
+       <div v-show="tipshow" class="tip">{{tip}}</div>
+     <div :style="{height:bodyHeight}" @scroll="handleScroll($event)" class="contant">
+
 <!--    <p v-for="i in 200" >placeholder {{ i + '' + i }}</p>  -->
 <flexbox v-for="item in list">
      <flexbox-item :span="2"><img  :src="item.member.avatar_normal" alt=""></flexbox-item>
@@ -66,29 +68,34 @@ export default {
            type: '1',
            list: [],
            bodyHeight:'',
-           tabList:[{name:"热门",tag:"hot",id:""},{name:"最新",tag:"latest",id:""},{name:"程序员",tag:"show",id:"300"},{name:"分享与发现",tag:"show",id:"16"},{name:"问与答",tag:"show",id:"12"},],
-           activeTab:"hot",
+           tabList:[{name:"热门",tag:"hot",id:"",active:"tab01"},{name:"最新",tag:"latest",id:"",active:"tab02"},{name:"程序员",tag:"show",id:"300",active:"tab03"},{name:"分享与发现",tag:"show",id:"16",active:"tab04"},{name:"问与答",tag:"show",id:"12",active:"tab05"},],
+           activeTab:"tab01",
            index:0,
            loading:false,
-           show:true
+           show:true,
+           selected:'',
+           node_id:'',
+           tip:"正在更新..",
+           tipshow:false
          }
 
   },
-  mounted (){
-    
+  mounted (){ 
      this.getList()
-     this.getBodyHeight()
-     
+     this.getBodyHeight()    
   },
+  ready () {
+  window.addEventListener('scroll', this.handleScroll);
+},
   methods:{
+      //获取列表数据
       getList:function (e) {
-          this.$data.activeTab = e?e.tag:this.activeTab
+          this.$data.selected = e?e.tag:"hot"
           let that = this  
-          let node_id = ""
-          this.$data.activeTab=="show" && e.id!=""?node_id=e.id:node_id="0"
+          this.$data.selected=="show" && e.id!=""?this.$data.node_id=e.id:this.$data.node_id="0"
           that.$data.loading = true;
           //判断本地缓存是否有数据
-          let key = that.$data.activeTab+"-"+node_id;
+          let key = this.$data.selected+"-"+this.$data.node_id;
           let storage = window.localStorage;
            let sstorage = window.sessionStorage ;
           console.log(key) 
@@ -97,7 +104,7 @@ export default {
           }
           if( storage.getItem(key) == null ) {
             // 从服务器获取数据并写入缓存
-            this.$http.get('/api/topics/'+that.$data.activeTab+'.json?node_id='+node_id,{timeout: 1000}).then(function(res){
+            this.$http.get('/api/topics/'+this.$data.selected+'.json?node_id='+this.$data.node_id,{timeout: 1000}).then(function(res){
                     that.$data.list=res.data;
                     //写进本地缓存
                     storage.setItem(key, JSON.stringify(res.data));//对象转字符串
@@ -106,7 +113,6 @@ export default {
                          that.$data.loading = false;
                          that.$data.show = false;
                       });
-
             })
           .catch(function(err){
              console.log("请求失败，原因如下："+err);
@@ -124,9 +130,42 @@ export default {
         }
           
       },
+      //响应式滚动内容高度
       getBodyHeight:function(){
           let height = document.documentElement.clientHeight;
           this.$data.bodyHeight = height-154+"px";
+      },
+      //刷新数据
+      handleScroll:function(event){
+        let top = event.srcElement.style.marginTop
+        console.log(event.srcElement.style.cssText)
+        let that = this
+        let key = this.$data.selected+"-"+this.$data.node_id;
+        let storage = window.localStorage;
+        if(event.srcElement.scrollTop<=0){
+          that.$data.tipshow=true
+          that.$data.tip="正在更新..."
+           console.log(event.srcElement.style.cssText)
+            this.$http.get('/api/topics/'+this.$data.selected+'.json?node_id='+this.$data.node_id,{timeout: 1000}).then(function(res){
+            console.log(res)
+                    that.$data.list=res.data;
+                    //更新本地缓存
+                    storage.setItem(key, JSON.stringify(res.data));//对象转字符串
+                    that.$nextTick(function(){
+                        that.$data.tip="更新完成！"
+                        setTimeout(function () {
+                          that.$data.tipshow=false
+                        },1000)
+                        
+                      });
+            })
+          .catch(function(err){
+             console.log("请求失败，原因如下："+err);
+              that.$data.show = false;
+               that.$data.loading = false;
+          })
+
+        }
       }
   }
 
@@ -136,9 +175,24 @@ export default {
 <style lang="less" scoped>
 @import '~vux/src/styles/1px.less';
 @import '../assets/common.less';
+.tip{
+  position: relative;
+  top: 0px;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  background-color: #35495e;
+  text-align: center;
+  color: #fff;
+  z-index: 99999999999;
+  font-size: 12px;
+  transition: all .5s;
+}
 .contant{
   width: 95%;
-  margin: 2.5%;
+ margin: 2.5%;
+  position: relative;
   overflow-x:hidden;
   overflow-y: scroll;
    -webkit-overflow-scrolling: touch;
@@ -146,6 +200,8 @@ export default {
 -moz-transform: translate3d(0, 0, 0);
 -ms-transform: translate3d(0, 0, 0);
 transform: translate3d(0, 0, 0);
+transition: all .5s;
+
   .title{
     font-size: .79rem;
     font-weight: 400;
