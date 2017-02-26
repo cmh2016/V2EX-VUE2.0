@@ -17,43 +17,43 @@ export default {
 <style lang="less">
 @import '~vux/src/styles/reset.less';
 .fade-enter-active, .fade-leave-active{
+ -webkit-transform: translate3d(100%, 0, 0);
+  transform: translate3d(100%, 0, 0);
+  transition: all 0.3s ease;
 
-  transition: all 0.5s ease     
 }
 .fade-enter, .fade-leave-active{
-  opacity: 0
+  opacity: 0;
+  -webkit-transform: translate3d(0, 0, 0);
 }
 .fold-enter-active {
-  animation-name: fold-in;
-  animation-duration: .5s;
-  transition: all 0.5s ease
+  animation-name: fold-in .5s;
 }
 .fold-leave-active {
-  animation-name: fold-out;
-  animation-duration: .5s;
-  transition: all 0.5s ease
+  animation-name: fold-out .5s;
 }
 @keyframes fold-in {
-  0% {
+  from {
+    -webkit-transform: translate3d(100%, 0, 0);
     transform: translate3d(100%, 0, 0);
+    visibility: visible;
+  }
 
-  }
-  50% {
-    transform: translate3d(50%, 0, 0);
-  }
-  100% {
+  to {
+    -webkit-transform: translate3d(0, 0, 0);
     transform: translate3d(0, 0, 0);
   }
 }
 @keyframes fold-out {
-  0% {
+  from {
+     -webkit-transform: translate3d(0, 0, 0);
     transform: translate3d(0, 0, 0);
   }
-  50% {
-    transform: translate3d(50%, 0, 0);
-  }
-  100% {
+
+  to {
+    -webkit-transform: translate3d(100%, 0, 0);
     transform: translate3d(100%, 0, 0);
+    visibility: visible;
   }
 }
 </style>

@@ -13,7 +13,7 @@ export default {
     },
     data () {
         return{
-            showBack:true
+            showBack:false
         }
     }
 }

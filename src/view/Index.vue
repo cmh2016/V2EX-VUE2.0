@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="index">
   <x-welcome v-show="show"></x-welcome>
    <x-loading v-show="loading"></x-loading>
     <x-header></x-header>
@@ -82,11 +82,9 @@ export default {
   },
   mounted (){ 
      this.getList()
-     this.getBodyHeight()    
+     this.getBodyHeight() 
+     window.addEventListener('scroll', this.handleScroll);   
   },
-  ready () {
-  window.addEventListener('scroll', this.handleScroll);
-},
   methods:{
       //获取列表数据
       getList:function (e) {
@@ -97,8 +95,7 @@ export default {
           //判断本地缓存是否有数据
           let key = this.$data.selected+"-"+this.$data.node_id;
           let storage = window.localStorage;
-           let sstorage = window.sessionStorage ;
-          console.log(key) 
+           let sstorage = window.sessionStorage ; 
           if(sstorage.getItem("welcome") == "end"){
             that.$data.show = false;
           }
@@ -125,6 +122,7 @@ export default {
             that.$data.list = JSON.parse(storage.getItem(key))
            that.$nextTick(function(){
                          that.$data.loading = false;
+                         that.$data.show = false;
                       });
           
         }
@@ -137,15 +135,12 @@ export default {
       },
       //刷新数据
       handleScroll:function(event){
-        let top = event.srcElement.style.marginTop
-        console.log(event.srcElement.style.cssText)
         let that = this
         let key = this.$data.selected+"-"+this.$data.node_id;
         let storage = window.localStorage;
         if(event.srcElement.scrollTop<=0){
           that.$data.tipshow=true
           that.$data.tip="正在更新..."
-           console.log(event.srcElement.style.cssText)
             this.$http.get('/api/topics/'+this.$data.selected+'.json?node_id='+this.$data.node_id,{timeout: 1000}).then(function(res){
             console.log(res)
                     that.$data.list=res.data;
@@ -161,8 +156,10 @@ export default {
             })
           .catch(function(err){
              console.log("请求失败，原因如下："+err);
-              that.$data.show = false;
-               that.$data.loading = false;
+               that.$data.tip="更新失败，稍候重试！"
+                        setTimeout(function () {
+                          that.$data.tipshow=false
+                        },1000)
           })
 
         }
