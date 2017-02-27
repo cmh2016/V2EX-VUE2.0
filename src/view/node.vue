@@ -2,10 +2,12 @@
 <div class="node">
  <x-loading v-show="loading"></x-loading>
 	<x-header></x-header>
-	 <search  @on-result-click="clickResuilt" v-model.lazy="word" :results="results" @on-change="getResult" v-show="searchShow" placeholder="搜索主题" cancelText="取消" position="absolute" auto-scroll-to-top top="46px"></search>
+	 <search  @on-result-click="clickResuilt" v-model.lazy="word" :results="results" @on-change="getResult" v-show="searchShow" placeholder="搜索主题" cancelText="取消" position="absolute" auto-scroll-to-top ></search>
 	<scroller lock-x height="-100" use-pullup use-pulldown  @on-pulldown-loading="refresh" @on-scroll="" @on-pullup-loading="loadMore" ref="scroller">
       	<div class="contant">
+       <group>
 			<cell v-for="item in filteredItems" :title="item.title" :link="{path:'/node_detail',query: { id: item.id }}" :inline-desc='item.header?item.header:"暂无简介"'></cell>
+      </group>  
 		</div>
     </scroller>
     <alert v-model="alert" title="温馨提示" button-text="确认">{{text}}</alert>
@@ -19,7 +21,7 @@
 import XHeader from 'components/header'
 import XFooter from 'components/footer'
 import XLoading from "components/loading";
-import { Cell ,Search ,Scroller,Icon,Alert } from 'vux'
+import { Cell ,Search ,Scroller,Icon,Alert ,Group } from 'vux'
 export default {
   name: 'node',
   components:{
@@ -30,7 +32,8 @@ export default {
   	XLoading,
   	Scroller,
   	Icon,
-    Alert 
+    Alert,
+    Group  
   },
   data () {
     return {
@@ -191,6 +194,9 @@ export default {
 </script>
 
 <style lang="less">
+.node{
+  overflow: hidden;
+}
 .contant{
 	.vux-label-desc{
 		display: -webkit-box!important;
@@ -218,8 +224,11 @@ export default {
 	.searchNode{
 		bottom:130px;
 	} 
+  .vux-search-fixed{
+    height: 100%;
+  }
   .weui-cells.vux-search_show{
-    height: 420px;
+    height:90%;
     overflow-y:scroll!important;
     -webkit-overflow-scrolling: touch;
     -webkit-transform: translate3d(0, 0, 0);
