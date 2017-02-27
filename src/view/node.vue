@@ -86,7 +86,7 @@ export default {
                     that.$nextTick(function(){
                          that.$data.loading = false;
                       });
-      that.$data.newList=that.$data.newList.concat(this.$data.list.slice(0, 10))
+      that.$data.newList=that.$data.newList.concat(that.$data.list.slice(0, 10))
 
             })
           .catch(function(err){

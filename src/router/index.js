@@ -35,6 +35,6 @@ export default new Router({
 	    name:"主题详情"
 	  }
 	],
-   mode: 'history'
+   // mode: 'history'
 
 })
