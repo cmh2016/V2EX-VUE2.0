@@ -1,0 +1,27 @@
+<template lang="html">
+    <div>
+        <x-header style="background-color:#556;" :left-options="{showBack: showBack}">{{title}}</x-header>
+    </div>
+</template>
+
+<script>
+import { XHeader } from 'vux'
+
+export default {
+    props: {
+          title: String
+     },
+    components:{
+        XHeader
+    },
+    data () {
+        return{
+            showBack:true
+        }
+    }
+}
+</script>
+
+<style lang="css">
+
+</style>
