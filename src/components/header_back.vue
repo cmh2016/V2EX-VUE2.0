@@ -1,6 +1,6 @@
 <template lang="html">
     <div>
-        <x-header style="background-color:#556;" :left-options="{showBack: showBack}">{{title}}</x-header>
+        <x-header style="background-color:#556;position: fixed;top:0;left:0;width:100vw" :left-options="{showBack: showBack}">{{title}}</x-header>
     </div>
 </template>
 

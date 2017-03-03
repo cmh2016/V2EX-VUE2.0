@@ -15,7 +15,7 @@
 
 <!--    <p v-for="i in 200" >placeholder {{ i + '' + i }}</p>  -->
 <flexbox v-for="item in list">
-     <flexbox-item :span="2"><img  :src="item.member.avatar_normal" alt=""></flexbox-item>
+     <flexbox-item :span="2"> <router-link :to="{ path: '/user', query: { username: item.member.username }}"><img  :src="item.member.avatar_normal" alt=""></router-link></flexbox-item>
      <flexbox-item>
      <router-link :to="{ path: '/detail', query: { id: item.id }}"><h2  class="title" v-text="item.title"></h2><span class="reply" v-text="item.replies"></span></router-link>
      
@@ -101,7 +101,7 @@ export default {
           }
           if( storage.getItem(key) == null ) {
             // 从服务器获取数据并写入缓存
-            this.$http.get('/api/topics/'+this.$data.selected+'.json?node_id='+this.$data.node_id,{timeout: 1000}).then(function(res){
+            this.$http.get('/api/topics/'+this.$data.selected+'.json?node_id='+this.$data.node_id).then(function(res){
                     that.$data.list=res.data;
                     //写进本地缓存
                     storage.setItem(key, JSON.stringify(res.data));//对象转字符串
@@ -141,7 +141,7 @@ export default {
         if(event.srcElement.scrollTop<=0){
           that.$data.tipshow=true
           that.$data.tip="正在更新..."
-            this.$http.get('/api/topics/'+this.$data.selected+'.json?node_id='+this.$data.node_id,{timeout: 1000}).then(function(res){
+            this.$http.get('/api/topics/'+this.$data.selected+'.json?node_id='+this.$data.node_id).then(function(res){
             console.log(res)
                     that.$data.list=res.data;
                     //更新本地缓存
