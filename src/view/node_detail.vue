@@ -15,24 +15,7 @@
     </div>
     <div class="list">
       <p>主题文章</p>
-      <flexbox v-for="item in list">
-     <flexbox-item :span="2"> <router-link :to="{ path: '/user', query: { username: item.member.username }}"><img  :src="item.member.avatar_normal" alt=""></router-link></flexbox-item>
-     <flexbox-item>
-     <router-link :to="{ path: '/detail', query: { id: item.id }}"><h2  class="title" v-text="item.title"></h2><span class="reply" v-text="item.replies"></span></router-link>
-     
-       <flexbox :gutter="5">
-       <flexbox-item :span="3">
-       <span  class="tag" v-text="item.node.title"></span>
-     </flexbox-item>
-     <flexbox-item>
-       <span class="user" v-text="item.member.username"></span>
-     </flexbox-item>
-      <flexbox-item>
-       <span class="time">{{item.last_modified | time}}</span>
-     </flexbox-item>
-       </flexbox>
-     </flexbox-item>
-     </flexbox>
+      <x-list :list="list"></x-list>
     </div>
 	 </div> 
 </div>
@@ -40,15 +23,15 @@
 
 <script>
 import XHeader from 'components/header_back'
-import { Loading,Flexbox,FlexboxItem } from 'vux'
+import { Loading} from 'vux'
+import XList from "components/list";
 export default {
 
   name: 'node_detail',
    components: {
     XHeader,
     Loading,
-    Flexbox,
-    FlexboxItem
+    XList
   },
 
   data () {
@@ -157,46 +140,8 @@ export default {
       z-index: 666;
       width: 95%;
 
-       .vux-flexbox{
-    margin-bottom: .5rem;
-  }
-  .title{
-    font-size: .79rem;
-    font-weight: 400;
-    .ellipsesOne;
-    color: #333;
-    display: inline-block;
-    width: 80%;
-  }
-  .tag{
-    padding: 3px;
-    background-color: #f5f5f5;
-    color: #999;
-    font-size: .6rem;
-    .ellipsesOne;
-  }
-  .user{
-    font-size: .7rem;
-    .ellipsesOne;
-  }
-  .time{
-    font-size: .68rem;
-    color: #666;
-  }
-  .reply{
-    font-size: .65rem;
-    display: inline-block;
-    min-width: 25px;
-    min-height: 25px;
-    line-height: 25px;
-    border: 4px solid #f5f5f5;
-    border-radius: 50%;
-    color: #333;
-     vertical-align: middle;
-     text-align: center;
-    float: right;
-     background-color: #f5f5f5;
-  }
+
+  
     }
 	}
 </style>
