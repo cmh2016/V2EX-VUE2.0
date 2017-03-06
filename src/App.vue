@@ -15,6 +15,7 @@ export default {
 </script>
 
 <style lang="less">
+
 @import '~vux/src/styles/reset.less';
 .fade-enter-active, .fade-leave-active{
  -webkit-transform: translate3d(100%, 0, 0);
