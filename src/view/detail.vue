@@ -15,7 +15,7 @@
             <div v-for="item in reply" class="commentContent" flex="dir:left box:first">
                 <div class="left" flex="dir:top box:last">
                 <span>
-                    <img :src="item.member.avatar_mini" alt="">
+                   <router-link :to="{ path: '/user', query: { username: item.member.username }}"><img  :src="item.member.avatar_normal" alt=""></router-link>
                 </span>
                     <p>{{item.member.username}}</p>
                 </div>
