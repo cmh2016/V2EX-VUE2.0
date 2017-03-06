@@ -25,7 +25,7 @@ module.exports = {
     port: 8088,
     autoOpenBrowser: false,
     assetsSubDirectory: 'static',
-    assetsPublicPath: './',
+    assetsPublicPath: '/',
     proxyTable: {
         '/api':{
             target:'http://www.v2ex.com/api',
