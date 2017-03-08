@@ -1,3 +1,4 @@
+
 # v2ex
 
 > A vue.js project for V2EX
@@ -22,6 +23,11 @@
 6. 上拉加载和下拉刷新
 7. 欢迎页和Loading模块
 
+## 在线预览
+>扫一扫
+
+![](http://i1.piimg.com/567571/d10efe65cd3d4fec.png)
+[点击](http://cmh.leolei.cn/vue)
 ## 注意！注意！注意！
 > 本地运行会有跨域问题。按照如下配置可通过node解决跨域问题。但是这个不行，已亲测豆瓣API可以实现跨域，不知道是不是V2EX提供的api是情况。本地开发解决跨域终极方法（仅仅适用于开发环境）--安装谷歌插件 Allow-Control-Allow-Origin: * 即可
 
@@ -43,7 +49,6 @@ dev: {
   },
 ```
 
-## github地址[github](https://github.com/cmh2016/V2EX-VUE2.0)
 
 ## Build Setup
 
